@@ -85,8 +85,7 @@ async function remove(userId) {
 //     return userToSave
 // }
 async function save(userToSave) {
-    try {        
-        userToSave.score = 10000   
+    try {                 
         userToSave.createdAt = Date.now()     
         if (!userToSave.imgUrl) userToSave.imgUrl = 'https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png'            
         const collection = await dbService.getCollection(collectionName)
