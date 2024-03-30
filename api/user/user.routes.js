@@ -7,7 +7,7 @@ router.get('/', getUsers)
 router.get('/:id', getUser)
 router.get('/byname/:userName',getByUser)
 router.post('/',addUser)
-router.put('/', updateUser)
+router.put('/:id', updateUser)
 router.delete('/:id', deleteUser)
 
 export const userRoutes = router

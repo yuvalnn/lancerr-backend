@@ -16,6 +16,19 @@ export async function getOrders(req, res) {
         res.status(400).send({ err: 'Failed to get orders' })
     }
 }
+export async function getSellerOrders(req, res) {
+    try {        
+        console.log('yo', req.body)
+        var { loggedinUser } = req
+        loggedinUser.isSeller = true
+        // const orders = await orderService.query(req.body)
+        const orders = await orderService.query(loggedinUser)
+        res.send(orders)
+    } catch (err) {
+        loggerService.error('Cannot get orders', err)
+        res.status(400).send({ err: 'Failed to get orders' })
+    }
+}
 
 export async function deleteOrder(req, res) {
     try {
@@ -58,5 +71,18 @@ export async function addOrder(req, res) {
     } catch (err) {
         loggerService.error('Failed to add order', err)
         res.status(400).send({ err: 'Failed to add order' })
+    }
+}
+
+export async function updateOrder(req, res) {
+    // const { _id, status } = req.body
+    // const orderToSave = { _id, status }
+    var order = req.body
+    
+    try {
+        const savedOrder = await orderService.update(order)
+        res.send(savedOrder)
+    } catch (err) {
+        res.status(400).send(`Couldn't update order ${err}`)
     }
 }

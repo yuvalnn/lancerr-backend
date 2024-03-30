@@ -4,6 +4,7 @@ import { asyncLocalStorage } from '../../services/als.service.js'
 import mongodb from 'mongodb'
 const { ObjectId } = mongodb
 
+const collectionName = 'order'
 async function query(filterBy = {}) {
     try {
         console.log('query_start', filterBy)
@@ -93,7 +94,7 @@ async function add(order) {
         //     byUserId: new ObjectId(order.byUserId),            
         //     txt: order.txt
         // }
-        const collection = await dbService.getCollection('order')
+        const collection = await dbService.getCollection(collectionName)
         await collection.insertOne(order)
         // return orderToAdd
         return order
@@ -103,13 +104,43 @@ async function add(order) {
     }
 }
 
+async function update(order) {
+    try {        
+        // Peek only updateable fields
+        const orderToSave = {
+            status: order.status            
+        }
+        const collection = await dbService.getCollection(collectionName);
+        
+        const originOrder = await collection.findOne({ _id: new ObjectId(order._id) });
+        if (!originOrder) throw `Couldn't find order with _id ${order._id}`;
+        
+        const res = await collection.updateOne({ _id: new ObjectId(order._id) }, { $set: orderToSave });
+        if(res.modifiedCount < 1) throw 'Could not update order'
+     
+        // Return the updated order
+        return order;
+    } catch (err) {
+        loggerService.error(`Cannot update order ${order._id}`, err);
+        throw err;
+    }
+}
+
 function _buildCriteria(filterBy) {
     const criteria = {}
     console.log('buildcriteria', filterBy._id)
-    if (filterBy._id) {
-        console.log('Incriteria',criteria)
-        criteria['buyer._id'] = filterBy._id; 
+    if (filterBy.isSeller) {
+        if (filterBy._id) {
+            console.log('In criteria', criteria)
+            criteria['seller._id'] = filterBy._id
+        }
+    } else {
+        if (filterBy._id) {
+            console.log('In criteria', criteria)
+            criteria['buyer._id'] = filterBy._id
+        }
     }
+    
     // if (filterBy.buyer._id) criteria.buyer = {_id : new ObjectId(filterBy.buyer._id)}
     // if (filterBy.buyer?._id) {
     //     criteria['buyer._id'] = filterBy.buyer._id; 
@@ -124,5 +155,6 @@ function _buildCriteria(filterBy) {
 export const orderService = {
     query,
     remove,
-    add
+    add,
+    update
 }
