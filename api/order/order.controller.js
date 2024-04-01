@@ -3,6 +3,7 @@ import { userService } from '../user/user.service.js'
 import { gigService } from '../gig/gig.service.js'
 import { authService } from '../auth/auth.service.js'
 import { orderService } from './order.service.js'
+import { socketService,SOCKET_EVENT_NEW_ORDER,SOCKET_EVENT_ORDER_UPDATED } from '../../services/socket.service.js'
 
 export async function getOrders(req, res) {
     try {        
@@ -65,7 +66,11 @@ export async function addOrder(req, res) {
 
         // delete order.byUser.imgUrl
       
-
+        socketService.emitToUser({
+            type: SOCKET_EVENT_NEW_ORDER,
+            data: order,
+            userId: order.seller._id
+        })
         res.send(order)
 
     } catch (err) {
@@ -78,6 +83,12 @@ export async function updateOrder(req, res) {
     // const { _id, status } = req.body
     // const orderToSave = { _id, status }
     var order = req.body
+
+    socketService.emitToUser({
+        type: SOCKET_EVENT_ORDER_UPDATED,
+        data: order,
+        userId: order.buyer._id
+    })
     
     try {
         const savedOrder = await orderService.update(order)
