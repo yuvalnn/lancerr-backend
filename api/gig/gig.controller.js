@@ -5,19 +5,19 @@ const MAX_GIG_VISITED = 3
 
 // List
 export async function getGigs(req, res) {    
-    // const filterBy = {
-    //     title: req.query.title || '',
+     const filterBy = {
+         title: req.query.txt || '',
     //     severity: +req.query.severity || 0,
     //     pageIdx: req.query.pageIdx || undefined,
     //     sortBy: req.query.sortBy || '',
     //     sortDir: req.query.sortDir || 1,
     //     lables: req.body.lables || undefined,
     //     userId: req.query.userId || undefined
-    // }
+     }
 
     try {
-        // const gigs = await gigService.query(filterBy)
-        const gigs = await gigService.query()
+         const gigs = await gigService.query(filterBy)
+        //const gigs = await gigService.query()
         res.send(gigs)
     } catch (err) {
         res.status(400).send(`Couldn't get gigs...`)

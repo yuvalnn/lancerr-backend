@@ -17,9 +17,11 @@ const PAGE_SIZE = 4
 
 async function query(filterBy = {}) {
     try {
+        console.log(criteria)
         const criteria = _buildCriteria(filterBy)
         const sortBy = _buildSortBy(filterBy)        
         const collection = await dbService.getCollection(collectionName)
+        
         const gigCursor = await collection.find(criteria).sort(sortBy)
 
         if (filterBy.pageIdx !== undefined) {            
@@ -140,7 +142,7 @@ function _saveGigsToFile(path) {
 function _buildCriteria(filterBy) {
     const criteria = {}
     if (filterBy.title) {
-        criteria.title = { $regex: filterBy.title, $options: 'i' }
+        criteria.title = { $regex: filterBy.txt, $options: 'i' }
     }
     if (filterBy.severity) {
         criteria.severity = { $gt: filterBy.severity }
