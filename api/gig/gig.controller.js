@@ -7,6 +7,7 @@ const MAX_GIG_VISITED = 3
 export async function getGigs(req, res) {    
      const filterBy = {
          title: req.query.txt || '',
+         tags: req.query.tags || ''
     //     severity: +req.query.severity || 0,
     //     pageIdx: req.query.pageIdx || undefined,
     //     sortBy: req.query.sortBy || '',

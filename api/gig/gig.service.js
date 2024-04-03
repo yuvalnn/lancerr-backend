@@ -16,11 +16,11 @@ const collectionName = 'gig'
 const PAGE_SIZE = 4
 
 async function query(filterBy = {}) {
-    try {
-        console.log(criteria)
-        const criteria = _buildCriteria(filterBy)
+    try {                
+        const criteria = _buildCriteria(filterBy)        
         const sortBy = _buildSortBy(filterBy)        
         const collection = await dbService.getCollection(collectionName)
+        
         
         const gigCursor = await collection.find(criteria).sort(sortBy)
 
@@ -33,6 +33,7 @@ async function query(filterBy = {}) {
 
         return gigs
     } catch (err) {
+        
         loggerService.error(`Had problems getting gigs...`)
         throw err
     }
@@ -142,19 +143,18 @@ function _saveGigsToFile(path) {
 function _buildCriteria(filterBy) {
     const criteria = {}
     if (filterBy.title) {
-        criteria.title = { $regex: filterBy.txt, $options: 'i' }
+        criteria.title = { $regex: filterBy.title, $options: 'i' }
     }
-    if (filterBy.severity) {
-        criteria.severity = { $gt: filterBy.severity }
-        
-    }   
-    if (filterBy.userId){  
-        console.log('hi', filterBy.userId)
+    if (filterBy.tags && filterBy.tags.length > 0) {
+        criteria.tags = { $in: filterBy.tags };
+    }
+    // if (filterBy.userId){  
+        // console.log('hi', filterBy.userId)
         // if (filterBy.byUserId) criteria.byUserId = new ObjectId(filterBy.byUserId)
         // criteria['creator._id'] = filterBy.userId;    
-        criteria['creator._id'] = new ObjectId(filterBy.userId)
-        console.log(criteria)
-    }  
+        // criteria['creator._id'] = new ObjectId(filterBy.userId)
+        // console.log(criteria)
+    // }  
     return criteria
 }
 
