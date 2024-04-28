@@ -25,7 +25,7 @@ export async function getGigs(req, res) {
     }
 }
 
-//  Save
+//  Save just check git connection 
 export async function addGig(req, res) {
     const { title, severity, description, createdAt, lables } = req.body
     // Better use createGig()
